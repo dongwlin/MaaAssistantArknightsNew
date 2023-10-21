@@ -48,7 +48,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: deps
-          key: ${{ runner.os }}-maaframework-${{ hashFiles('deps') }}-${{ steps.get-version.outputs.version }}
+          key: ${{ runner.os }}-maaframework-${{ steps.get-version.outputs.version }}
           restore-keys: |
             ${{ runner.os }}-maaframework-
 
@@ -68,7 +68,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: deps
-          key: ${{ runner.os }}-maaframework-${{ hashFiles('deps') }}-${{ steps.get-version.outputs.version }}
+          key: ${{ runner.os }}-maaframework-${{ steps.get-version.outputs.version }}
 
       - name: Set LD_LIBRARY_PATH
         run: |
