@@ -57,6 +57,10 @@ jobs:
         with:
           path: deps
           key: ${{ runner.os }}-maaframework-${{ hashFiles('deps') }}-${{ steps.get-version.outputs.version }}
+
+      - name: Set LD_LIBRARY_PATH
+        run: |
+          echo "LD_LIBRARY_PATH=/home/runner/work/MaaAssistantArknightsNew/MaaAssistantArknightsNew/deps/bin" >> $GITHUB_ENV
         
       - name: Check Pipeline
         run: |
