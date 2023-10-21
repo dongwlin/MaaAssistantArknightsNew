@@ -1,0 +1,72 @@
+{
+    "$schema": "../pipeline.schema.json",
+    "StartUp": {
+        "next": [
+            "Connecting",
+            "StartToWakeUp",
+            "StartGame",
+            "HomeFlag",
+            "Sub_StartArknights"
+        ]
+    },
+    "Sub_StartArknights": {
+        "is_sub": true,
+        "action": "StartApp",
+        "package": "com.hypergryph.arknights/com.u8.sdk.U8UnityContext"
+    },
+    "StartGame": {
+        "recognition": "TemplateMatch",
+        "template": "StartUp/StartGame.png",
+        "roi": [
+            575,
+            615,
+            130,
+            105
+        ],
+        "action": "Click",
+        "next": [
+            "StartToWakeUp",
+            "StartGame"
+        ]
+    },
+    "StartToWakeUp": {
+        "recognition": "OCR",
+        "text": "开始唤醒",
+        "roi":[
+            543,
+            445,
+            194,
+            131
+        ],
+        "action": "Click",
+        "next": [
+            "Connecting",
+            "StartToWakeUp"
+        ]
+    },
+    "Connecting": {
+        "recognition": "OCR",
+        "text": "取得神经连接",
+        "roi": [
+            631,
+            538,
+            191,
+            123
+        ],
+        "next": [
+            "Connecting",
+            "HomeFlag"
+        ]
+    },
+    "HomeFlag": {
+        "recognition": "TemplateMatch",
+        "green_mask": true,
+        "template": "StartUp/HomeFlag.png",
+        "roi": [
+            0,
+            0,
+            148,
+            148
+        ]
+    }
+}

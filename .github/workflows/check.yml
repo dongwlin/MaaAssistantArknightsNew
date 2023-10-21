@@ -1,0 +1,63 @@
+name: check pipeline
+
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - '.github/workflows/ci.yml'
+      - 'assets/**'
+  pull_request:
+    branches:
+      - '**'
+    paths:
+      - '.github/workflows/ci.yml'
+      - 'assets/**'
+  workflow_dispatch:
+
+jobs:
+  ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v3
+
+      - name: Get MaaFramework Version
+        id: get-version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(curl -s -H "Authorization: Bearer $GH_TOKEN" https://api.github.com/repos/MaaAssistantArknights/MaaFramework/releases/latest | jq -r '.tag_name')
+          echo "::set-output name=version::$version"
+
+      - name: Restore MaaFramework Cache
+        id: restore-cache
+        uses: actions/cache@v2
+        with:
+          path: deps
+          key: ${{ runner.os }}-maaframework-${{ hashFiles('deps') }}-${{ steps.get-version.outputs.version }}
+          restore-keys: |
+            ${{ runner.os }}-maaframework-
+
+      - name: Download MaaFramework
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        uses: robinraju/release-downloader@v1.8
+        with:
+          repository: MaaAssistantArknights/MaaFramework
+          latest: true
+          fileName: "MAA-linux-x86_64*"
+          out-file-path: "deps"
+          extract: true
+
+      - name: Cache MaaFramework
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: deps
+          key: ${{ runner.os }}-maaframework-${{ hashFiles('deps') }}-${{ steps.get-version.outputs.version }}
+        
+      - name: Check Pipeline
+        run: |
+          python3 ./load.py
